@@ -25,7 +25,8 @@ case $opt in
 				echo "To disable SIP, reboot your mac and enter Recovery Menu using CMD+R"
 				echo "Open a terminal, and enter "csrutil disable" and reboot"
 				echo "Dont forget to re enable SIP using "csrutil enable" after install "
-				echo "actual status is :" csrutil status
+				echo "actual status is :"
+				csrutil status
 				;;
 		"2")
 		echo "Creating Logs Directory"
