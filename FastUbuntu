@@ -10,9 +10,10 @@ echo "All logs will be forwarded to /tmp/logs/FastUbuntu"
 echo "please send issue on Tchakatak GitHub if you find !"
 sleep 5
 
-echo "To see how to disable SIP mac !!!!!REQUIRED!!!! please press 1"
-echo "After disabling SIP mac, please press 2"
-echo "To only install Refind please press 3"
+echo "Option 1 : To see how to disable SIP mac !!!!!REQUIRED!!!!"
+echo "Option 2 : Full prepare and install EFI (NEED SIP DISABLE)"
+echo "Option 3 : Only install EFI module (NEED SIP DISABLE)"
+
 ### WIP echo "after a complet run, press 4 to resize / partition and make free space for ubuntu (20Gb)"
 
 PS3='Please enter your choice: '
@@ -24,8 +25,7 @@ case $opt in
 				echo "To disable SIP, reboot your mac and enter Recovery Menu using CMD+R"
 				echo "Open a terminal, and enter "csrutil disable" and reboot"
 				echo "Dont forget to re enable SIP using "csrutil enable" after install "
-				echo "actual status is :"
-				csrutil status
+				echo "actual status is :" csrutil status
 				;;
 		"2")
 		echo "Creating Logs Directory"
@@ -62,7 +62,7 @@ case $opt in
 		rm /tmp/refind-bin-0.10.5.zip
 		rm -R /tmp/refind-bin-0.10.5
 
-		echo "if ALL success, you can reboot and install Ubuntu with your key"
+		echo "if ALL success, you can reboot and install Ubuntu with your usb key or live CD"
 sleep 5
 		echo "if it dont , you have probably SIP activated, use Option 1 to see how disable it, and chose after option 3 ()"
 sleep 5
