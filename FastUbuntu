@@ -1,0 +1,96 @@
+#! /bin/bash
+
+############
+## Written by maxime cheminade aka Tachikomas on 2017 for Ubuntu Party Paris Only
+############
+
+
+echo "Welcome to the fast install tool for Mac Os"
+echo "All logs will be forwarded to /tmp/logs/FastUbuntu"
+echo "please send issue on Tchakatak GitHub if you find !"
+sleep 5
+
+echo "To see how to disable SIP mac !!!!!REQUIRED!!!! please press 1"
+echo "After disabling SIP mac, please press 2"
+echo "To only install Refind please press 3"
+### WIP echo "after a complet run, press 4 to resize / partition and make free space for ubuntu (20Gb)"
+
+PS3='Please enter your choice: '
+options=("1" "2" "3" "4" "Quit")
+select opt in "${options[@]}"
+do
+case $opt in
+		"1")
+				echo "To disable SIP, reboot your mac and enter Recovery Menu using CMD+R"
+				echo "Open a terminal, and enter "csrutil disable" and reboot"
+				echo "Dont forget to re enable SIP using "csrutil enable" after install "
+				echo "actual status is :"
+				csrutil status
+				;;
+		"2")
+		echo "Creating Logs Directory"
+		mkdir /tmp/logs/
+		mkdir /tmp/logs/FastUbuntu
+		sleep 1
+		echo "Terminated"
+
+		sleep 2
+		echo "Verificating Volume on main disk"
+		sudo diskutil verifyVolume / > /tmp/logs/FastUbuntu/verifyVolume.log
+		echo "Verification Termniated, reparing broken stuff"
+		sudo diskutil repairVolume / > /tmp/logs/FastUbuntu/repairVolume.log
+		echo "Verification Completed"
+		sleep 2
+
+		echo "Installing Brew"
+		/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /tmp/logs/FastUbuntu/brewinstall.log
+		echo "brew install terminated"
+		sleep 5
+
+		echo "Using brew to download and install wget"
+		brew install wget > /tmp/logs/FastUbuntu/wgetinstall.log
+		sleep 3
+		echo "Brew finish to installed necessary library on your Mac"
+		sleep 5
+
+		echo "Downloading Refind"
+		cd /tmp/
+		wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip
+		unzip refind-bin-0.10.5.zip
+		cd /tmp/refind-bin-0.10.5
+		sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
+		rm /tmp/refind-bin-0.10.5.zip
+		rm -R /tmp/refind-bin-0.10.5
+
+		echo "if ALL success, you can reboot and install Ubuntu with your key"
+sleep 5
+		echo "if it dont , you have probably SIP activated, use Option 1 to see how disable it, and chose after option 3 ()"
+sleep 5
+    break
+
+				;;
+		"3")
+				echo "Reinstalling only Refind"
+				cd /tmp/
+				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip
+				unzip refind-bin-0.10.5.zip
+				cd /tmp/refind-bin-0.10.5
+		    sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
+				rm /tmp/refind-bin-0.10.5.zip
+				rm -R /tmp/refind-bin-0.10.5
+				echo "if ALL success, you can reboot and install Ubuntu with your key"
+		sleep 5
+				echo "if it dont , you have probably SIP activated, use Option 1 to see how disable it, and chose after option 3 ()"
+		sleep 5
+		break
+				;;
+
+				"4")
+   # Work in progress
+				;;
+		"Quit")
+				break
+				;;
+		*) echo invalid option;;
+esac
+done
