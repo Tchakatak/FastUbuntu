@@ -56,8 +56,8 @@ case $opt in
 
 				echo "Downloading Refind"
 				cd /tmp/
-				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip
-				unzip refind-bin-0.10.5.zip
+				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/wgetrefind.log
+				unzip refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/unziprefind.log
 				cd /tmp/refind-bin-0.10.5
 				sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
 				rm /tmp/refind-bin-0.10.5.zip
@@ -70,13 +70,12 @@ case $opt in
 				echo "Have fun on Ubuntu :)"
 				sleep 3
 				break
-
 				;;
 		"3")
 				echo "Reinstall only Refind"
 				cd /tmp/
-				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip
-				unzip refind-bin-0.10.5.zip
+				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/wgetrefind.log
+				unzip refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/unziprefind.log
 				cd /tmp/refind-bin-0.10.5
 		    sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
 				rm /tmp/refind-bin-0.10.5.zip
@@ -89,7 +88,6 @@ case $opt in
 				sleep 3
 				break
 				;;
-
 		"4")
 				break
 				# Work in progress
