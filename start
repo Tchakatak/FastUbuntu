@@ -1,0 +1,179 @@
+#!/bin/bash
+
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "$MYDIR/helper"
+
+
+status=$(echo "`csrutil status | awk '{ print $5 }' | sed 's/.$//'`")
+
+conf="
+# Set window title
+*.title = Welcome to FastUbuntu
+
+# Introductory text
+txt.type = text
+txt.default = FastUbuntu permet d'installer facilement les programmes nécessaire sous un mac pour faire permettre l'installation de Ubuntu sous Mac OS.
+txt.height = 176
+txt.width = 310
+txt.x = 340
+txt.y = 44
+txt.tooltip = This is an element of type “text”
+
+# Add a text field
+tf.type = text
+tf.default = Sip protection is $status
+tf.width = 310
+tf.tooltip = SIP
+
+# Add a filesystem browser
+#ob.type = openbrowser
+#ob.label = Example filesystem browser (textfield + open panel)
+#ob.width=310
+#ob.tooltip = This is an element of type “openbrowser”
+
+# Define radiobuttons
+#rb.type = radiobutton
+#rb.label = Example radiobuttons
+#rb.option = Radiobutton item #1
+#rb.option = Radiobutton item #2
+#rb.option = Radiobutton item #3
+#rb.tooltip = This is an element of type “radiobutton”
+
+# Add a popup menu
+pop.type = popup
+pop.label = Actions
+pop.width = 310
+pop.option = Check SIP / How To
+pop.option = Install all stuff
+pop.option = Install refind
+pop.option = Part Hard Drive
+pop.default = Check SIP / How To
+pop.tooltip = This is an element of type “popup”
+
+# Add 2 checkboxes
+#chk.rely = -18
+#chk.type = checkbox
+#chk.label = Pashua offers checkboxes, too
+#chk.tooltip = This is an element of type “checkbox”
+#chk.default = 1
+#chk2.type = checkbox
+#chk2.label = But this one is disabled
+#chk2.disabled = 1
+#chk2.tooltip = Another element of type “checkbox”
+
+# Add a cancel button with default label
+cb.type = cancelbutton
+cb.tooltip = This is an element of type “cancelbutton”
+
+db.type = defaultbutton
+db.tooltip = This is an element of type “defaultbutton” (which is automatically added to each window, if not included in the configuration)
+"
+
+if [ -d '/Volumes/Pashua/Pashua.app' ]
+then
+	# Looks like the Pashua disk image is mounted. Run from there.
+	customLocation='/Volumes/Pashua'
+else
+	# Search for Pashua in the standard locations
+	customLocation=''
+fi
+
+# Get the icon from the application bundle
+locate_pashua "$customLocation"
+bundlecontents=$(dirname $(dirname "$pashuapath"))
+if [ -e "./Contents/Resources/Ubuntu.png" ]
+then
+    conf="$conf
+          img.type = image
+          img.x = 240
+          img.y = 110
+          img.maxwidth = 185
+          img.tooltip = Ubuntu
+          img.path = ./Contents/Resources/Ubuntu.png"
+fi
+
+pashua_run "$conf" "$customLocation"
+
+echo "  pop = $pop"
+echo ""
+
+case $pop in
+		"Check SIP / How To")
+		checkSipGui="  img.type = image
+			img.x = 240
+			img.y = 110
+			img.maxwidth = 185
+			img.tooltip = Ubuntu
+			img.path = ./Contents/Resources/CMD.png""
+			
+				;;
+		"Install all stuff")
+		    echo "Creating Logs Directory"
+				mkdir /tmp/logs/
+				mkdir /tmp/logs/FastUbuntu
+				sleep 1
+				echo "Terminated"
+
+				sleep 2
+				echo "Verificating Volume on main disk"
+				sudo diskutil verifyVolume / > /tmp/logs/FastUbuntu/verifyVolume.log
+				echo "Verification Termniated, reparing broken stuff"
+				sudo diskutil repairVolume / > /tmp/logs/FastUbuntu/repairVolume.log
+				echo "Verification Completed"
+				sleep 2
+
+				echo "Installing Brew"
+				/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > /tmp/logs/FastUbuntu/brewinstall.log
+				echo "brew install terminated"
+				sleep 5
+
+				echo "Using brew to download and install wget"
+				brew install wget > /tmp/logs/FastUbuntu/wgetinstall.log
+				sleep 3
+				echo "Brew finish to installed necessary library on your Mac"
+				sleep 5
+
+				echo "Downloading Refind"
+				cd /tmp/
+				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/wgetrefind.log
+				unzip refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/unziprefind.log
+				cd /tmp/refind-bin-0.10.5
+				sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
+				rm /tmp/refind-bin-0.10.5.zip
+				rm -R /tmp/refind-bin-0.10.5
+
+				echo "if ALL success, you can reboot and install Ubuntu with your usb key or live CD"
+				sleep 5
+				echo "if it don't , you have probably SIP activated. Check the logs !"
+				echo "use Option 1 to see how disable it, and chose after option 3 to reinstall only refind"
+				echo "Have fun on Ubuntu :)"
+				sleep 3
+				break
+				;;
+		"Install refind")
+				echo "Reinstall only Refind"
+				cd /tmp/
+				wget https://downloads.sourceforge.net/project/refind/0.10.5/refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/wgetrefind.log
+				unzip refind-bin-0.10.5.zip > /tmp/logs/FastUbuntu/unziprefind.log
+				cd /tmp/refind-bin-0.10.5
+		    sudo bash /tmp/refind-bin-0.10.5/refind-install > /tmp/logs/FastUbuntu/refindinstall.log
+				rm /tmp/refind-bin-0.10.5.zip
+				rm -R /tmp/refind-bin-0.10.5
+				echo "if ALL success, you can reboot and install Ubuntu with your usb key or live CD"
+				sleep 5
+				echo "if it don't , you have probably SIP activated. Check the logs !"
+				echo "use Option 1 to see how disable it, and chose after option 3 to reinstall only refind"
+		    echo "Have fun on Ubuntu :)"
+				sleep 3
+				break
+				;;
+		"4")
+				break
+				# Work in progress
+				;;
+		"Quit")
+				break
+				;;
+
+esac
